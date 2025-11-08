@@ -1,10 +1,7 @@
 export async function fetchReviews(dbName) {
   const res = await fetch(`http://localhost:2000/${dbName}/reviews`);
   if (!res.ok) throw new Error("Failed to fetch reviews");
-//   return res.json();
-const data = await res.json();
-  console.log("Response data:", data);
-  return data;
+  return res.json();
 }
 
 export async function updateReview(dbName, review) {

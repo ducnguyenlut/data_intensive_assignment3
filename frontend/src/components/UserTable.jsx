@@ -1,13 +1,98 @@
 import { useState } from "react";
 import UserEditAlert from "../alert_ui/UserEditAlert";
 
-export default function UserTable({ dbName, users = [], onUpdate }) {
+export default function UserTable({ dbName, users = [], onUpdate, onDBChange }) {
   const [editingUser, setEditingUser] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const handleDBSelect = (db) => {
+    setShowDropdown(false);
+    onDBChange && onDBChange(db);
+  };
 
   return (
-    <div style={{ marginTop: "30px" }}>
-      <h2 style={{ color: "white" }}>Users from {dbName}</h2>
+    <div
+      style={{
+        marginTop: "30px",
+        border: "1px solid #444",
+        borderRadius: "8px",
+        overflow: "hidden",
+        backgroundColor: "#252421ff",
+      }}
+    >
+      {/* Header Section */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "12px 16px",
+          borderBottom: "1px solid #444",
+          backgroundColor: "#2e2c28",
+          color: "white",
+        }}
+      >
+        <h2 style={{ margin: 0, color: "#ffcc00" }}>Users</h2>
 
+        <div style={{ position: "relative" }}>
+          <button
+            onClick={() => setShowDropdown(!showDropdown)}
+            style={{
+              backgroundColor: "#007bff",
+              color: "white",
+              border: "none",
+              padding: "6px 12px",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "#0056b3")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "#007bff")
+            }
+          >
+            {dbName.toUpperCase()} ▼
+          </button>
+
+          {showDropdown && (
+            <div
+              style={{
+                position: "absolute",
+                right: 0,
+                top: "110%",
+                backgroundColor: "#2e2c28",
+                border: "1px solid #555",
+                borderRadius: "4px",
+                zIndex: 10,
+                overflow: "hidden",
+              }}
+            >
+              {["db1", "db2", "db3"].map((db) => (
+                <div
+                  key={db}
+                  onClick={() => handleDBSelect(db)}
+                  style={{
+                    padding: "8px 12px",
+                    cursor: "pointer",
+                    color: "white",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#3e3c38")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#2e2c28")
+                  }
+                >
+                  {db.toUpperCase()}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Table Section */}
       {users.length === 0 ? (
         <p style={{ color: "#ccc" }}>No users found in {dbName}</p>
       ) : (
@@ -107,6 +192,7 @@ export default function UserTable({ dbName, users = [], onUpdate }) {
           onClose={() => setEditingUser(null)}
         />
       )}
+
     </div>
   );
 }

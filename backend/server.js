@@ -109,6 +109,32 @@ app.put('/:db/:collection/:id', selectDB, async (req, res) => {
     res.json(updated);
 });
 
+const { users, products, categories, orders, reviews } = require("./dummy-data");
+
+// Restore DB endpoint
+app.post('/:db/restore', selectDB, async (req, res) => {
+  const dbName = req.params.db;
+  const Models = req.db;
+
+  try {
+    // Clear old data
+    await Promise.all(Object.keys(Models).map(key => Models[key].deleteMany({})));
+
+    // Restore from dummy-data
+    await Models.User.insertMany(users[dbName]);
+    await Models.Product.insertMany(products[dbName]);
+    await Models.Category.insertMany(categories[dbName]);
+    await Models.Order.insertMany(orders[dbName]);
+    await Models.Review.insertMany(reviews[dbName]);
+
+    res.json({ message: `${dbName} restored successfully` });
+  } catch (err) {
+    console.error("Restore error:", err);
+    res.status(500).send("Failed to restore database");
+  }
+});
+
+
 // Test route
 app.get('/', (req, res) => res.send('Backend server is running'));
 
