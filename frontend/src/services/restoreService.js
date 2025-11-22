@@ -1,6 +1,8 @@
 // services/restoreService.js
+import API_URL from '../config';
+
 export const restoreDatabase = async (dbName) => {
-  const response = await fetch(`http://localhost:2000/${dbName}/restore`, {
+  const response = await fetch(`${API_URL}/${dbName}/restore`, {
     method: "POST",
   });
   if (!response.ok) throw new Error("Failed to restore database " + dbName);

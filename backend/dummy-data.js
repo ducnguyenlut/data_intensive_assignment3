@@ -131,82 +131,99 @@ const categories = {
   ]
 };
 
-// Orders and Reviews are kept simple, still independent (no need for real references)
+// Orders reference Users and Products by ID (mixing IDs between tables)
+// Replicated orders (1-5) use same user/product IDs across all DBs
+// Fragmented orders (6-10) use different user/product IDs per DB
 const orders = {
   db1: [
-    { _id: 1, user: "Alice", product: "Laptop", quantity: 1 },
-    { _id: 2, user: "Bob", product: "Phone", quantity: 2 },
-    { _id: 3, user: "Carol", product: "Shirt", quantity: 1 },
-    { _id: 4, user: "David", product: "Shoes", quantity: 1 },
-    { _id: 5, user: "Eve", product: "Book", quantity: 3 },
-    { _id: 6, user: "Frank", product: "Tablet", quantity: 1 },
-    { _id: 7, user: "Grace", product: "Jacket", quantity: 2 },
-    { _id: 8, user: "Hank", product: "Notebook", quantity: 4 },
-    { _id: 9, user: "Ivy", product: "Basketball", quantity: 1 },
-    { _id: 10, user: "Jack", product: "Vacuum Cleaner", quantity: 1 }
+    // replicated - same user/product IDs across all DBs
+    { _id: 1, userId: 1, productId: 1, quantity: 1 },  // Alice -> Laptop
+    { _id: 2, userId: 2, productId: 2, quantity: 2 },  // Bob -> Phone
+    { _id: 3, userId: 3, productId: 3, quantity: 1 },  // Carol -> Shirt
+    { _id: 4, userId: 4, productId: 4, quantity: 1 },  // David -> Shoes
+    { _id: 5, userId: 5, productId: 5, quantity: 3 },  // Eve -> Book
+    // fragmented - different user/product IDs per DB
+    { _id: 6, userId: 6, productId: 6, quantity: 1 },  // Frank -> Tablet
+    { _id: 7, userId: 7, productId: 7, quantity: 2 },  // Grace -> Jacket
+    { _id: 8, userId: 8, productId: 8, quantity: 4 },  // Hank -> Notebook
+    { _id: 9, userId: 9, productId: 9, quantity: 1 },  // Ivy -> Basketball
+    { _id: 10, userId: 10, productId: 10, quantity: 1 }  // Jack -> Vacuum Cleaner
   ],
   db2: [
-    { _id: 1, user: "Alice", product: "Laptop", quantity: 1 },
-    { _id: 2, user: "Bob", product: "Phone", quantity: 2 },
-    { _id: 3, user: "Carol", product: "Shirt", quantity: 1 },
-    { _id: 4, user: "David", product: "Shoes", quantity: 1 },
-    { _id: 5, user: "Eve", product: "Book", quantity: 3 },
-    { _id: 6, user: "Liam", product: "Monitor", quantity: 1 },
-    { _id: 7, user: "Mia", product: "Sneakers", quantity: 2 },
-    { _id: 8, user: "Noah", product: "Pen", quantity: 5 },
-    { _id: 9, user: "Olivia", product: "Tennis Racket", quantity: 1 },
-    { _id: 10, user: "Pete", product: "Mixer", quantity: 1 }
+    // replicated - same user/product IDs across all DBs
+    { _id: 1, userId: 1, productId: 1, quantity: 1 },  // Alice -> Laptop
+    { _id: 2, userId: 2, productId: 2, quantity: 2 },  // Bob -> Phone
+    { _id: 3, userId: 3, productId: 3, quantity: 1 },  // Carol -> Shirt
+    { _id: 4, userId: 4, productId: 4, quantity: 1 },  // David -> Shoes
+    { _id: 5, userId: 5, productId: 5, quantity: 3 },  // Eve -> Book
+    // fragmented - different user/product IDs per DB
+    { _id: 6, userId: 6, productId: 6, quantity: 1 },  // Liam -> Monitor
+    { _id: 7, userId: 7, productId: 7, quantity: 2 },  // Mia -> Sneakers
+    { _id: 8, userId: 8, productId: 8, quantity: 5 },  // Noah -> Pen
+    { _id: 9, userId: 9, productId: 9, quantity: 1 },  // Olivia -> Tennis Racket
+    { _id: 10, userId: 10, productId: 10, quantity: 1 }  // Pete -> Mixer
   ],
   db3: [
-    { _id: 1, user: "Alice", product: "Laptop", quantity: 1 },
-    { _id: 2, user: "Bob", product: "Phone", quantity: 2 },
-    { _id: 3, user: "Carol", product: "Shirt", quantity: 1 },
-    { _id: 4, user: "David", product: "Shoes", quantity: 1 },
-    { _id: 5, user: "Eve", product: "Book", quantity: 3 },
-    { _id: 6, user: "Quinn", product: "Camera", quantity: 1 },
-    { _id: 7, user: "Ruby", product: "Hat", quantity: 2 },
-    { _id: 8, user: "Sam", product: "Paper", quantity: 10 },
-    { _id: 9, user: "Tina", product: "Football", quantity: 1 },
-    { _id: 10, user: "Uma", product: "Oven", quantity: 1 }
+    // replicated - same user/product IDs across all DBs
+    { _id: 1, userId: 1, productId: 1, quantity: 1 },  // Alice -> Laptop
+    { _id: 2, userId: 2, productId: 2, quantity: 2 },  // Bob -> Phone
+    { _id: 3, userId: 3, productId: 3, quantity: 1 },  // Carol -> Shirt
+    { _id: 4, userId: 4, productId: 4, quantity: 1 },  // David -> Shoes
+    { _id: 5, userId: 5, productId: 5, quantity: 3 },  // Eve -> Book
+    // fragmented - different user/product IDs per DB
+    { _id: 6, userId: 6, productId: 6, quantity: 1 },  // Quinn -> Camera
+    { _id: 7, userId: 7, productId: 7, quantity: 2 },  // Ruby -> Hat
+    { _id: 8, userId: 8, productId: 8, quantity: 10 },  // Sam -> Paper
+    { _id: 9, userId: 9, productId: 9, quantity: 1 },  // Tina -> Football
+    { _id: 10, userId: 10, productId: 10, quantity: 1 }  // Uma -> Oven
   ]
 };
 
+// Reviews reference Users and Products by ID (mixing IDs between tables)
+// Replicated reviews (1-5) use same user/product IDs across all DBs
+// Fragmented reviews (6-10) use different user/product IDs per DB
 const reviews = {
   db1: [
-    { _id: 1, user: "Alice", product: "Laptop", rating: 5, comment: "Fantastic performance!" },
-    { _id: 2, user: "Bob", product: "Phone", rating: 4, comment: "Works great!" },
-    { _id: 3, user: "Carol", product: "Shirt", rating: 3, comment: "Good quality." },
-    { _id: 4, user: "David", product: "Shoes", rating: 5, comment: "Very comfortable!" },
-    { _id: 5, user: "Eve", product: "Book", rating: 4, comment: "Nice story." },
-    { _id: 6, user: "Frank", product: "Tablet", rating: 3, comment: "Decent for the price." },
-    { _id: 7, user: "Grace", product: "Jacket", rating: 5, comment: "Perfect for winter!" },
-    { _id: 8, user: "Hank", product: "Notebook", rating: 4, comment: "Good paper quality." },
-    { _id: 9, user: "Ivy", product: "Basketball", rating: 5, comment: "Bounces well!" },
-    { _id: 10, user: "Jack", product: "Vacuum Cleaner", rating: 5, comment: "Cleans efficiently!" }
+    // replicated - same user/product IDs across all DBs
+    { _id: 1, userId: 1, productId: 1, rating: 5, comment: "Fantastic performance!" },  // Alice -> Laptop
+    { _id: 2, userId: 2, productId: 2, rating: 4, comment: "Works great!" },  // Bob -> Phone
+    { _id: 3, userId: 3, productId: 3, rating: 3, comment: "Good quality." },  // Carol -> Shirt
+    { _id: 4, userId: 4, productId: 4, rating: 5, comment: "Very comfortable!" },  // David -> Shoes
+    { _id: 5, userId: 5, productId: 5, rating: 4, comment: "Nice story." },  // Eve -> Book
+    // fragmented - different user/product IDs per DB
+    { _id: 6, userId: 6, productId: 6, rating: 3, comment: "Decent for the price." },  // Frank -> Tablet
+    { _id: 7, userId: 7, productId: 7, rating: 5, comment: "Perfect for winter!" },  // Grace -> Jacket
+    { _id: 8, userId: 8, productId: 8, rating: 4, comment: "Good paper quality." },  // Hank -> Notebook
+    { _id: 9, userId: 9, productId: 9, rating: 5, comment: "Bounces well!" },  // Ivy -> Basketball
+    { _id: 10, userId: 10, productId: 10, rating: 5, comment: "Cleans efficiently!" }  // Jack -> Vacuum Cleaner
   ],
   db2: [
-    { _id: 1, user: "Alice", product: "Laptop", rating: 5, comment: "Great device." },
-    { _id: 2, user: "Bob", product: "Phone", rating: 4, comment: "Solid battery life." },
-    { _id: 3, user: "Carol", product: "Shirt", rating: 3, comment: "Comfortable fit." },
-    { _id: 4, user: "David", product: "Shoes", rating: 5, comment: "Stylish and comfy!" },
-    { _id: 5, user: "Eve", product: "Book", rating: 4, comment: "Good read." },
-    { _id: 6, user: "Liam", product: "Monitor", rating: 5, comment: "Crisp and bright display!" },
-    { _id: 7, user: "Mia", product: "Sneakers", rating: 4, comment: "Lightweight and trendy." },
-    { _id: 8, user: "Noah", product: "Pen", rating: 3, comment: "Smooth writing." },
-    { _id: 9, user: "Olivia", product: "Tennis Racket", rating: 5, comment: "Excellent balance!" },
-    { _id: 10, user: "Pete", product: "Mixer", rating: 4, comment: "Strong motor." }
+    // replicated - same user/product IDs across all DBs
+    { _id: 1, userId: 1, productId: 1, rating: 5, comment: "Great device." },  // Alice -> Laptop
+    { _id: 2, userId: 2, productId: 2, rating: 4, comment: "Solid battery life." },  // Bob -> Phone
+    { _id: 3, userId: 3, productId: 3, rating: 3, comment: "Comfortable fit." },  // Carol -> Shirt
+    { _id: 4, userId: 4, productId: 4, rating: 5, comment: "Stylish and comfy!" },  // David -> Shoes
+    { _id: 5, userId: 5, productId: 5, rating: 4, comment: "Good read." },  // Eve -> Book
+    // fragmented - different user/product IDs per DB
+    { _id: 6, userId: 6, productId: 6, rating: 5, comment: "Crisp and bright display!" },  // Liam -> Monitor
+    { _id: 7, userId: 7, productId: 7, rating: 4, comment: "Lightweight and trendy." },  // Mia -> Sneakers
+    { _id: 8, userId: 8, productId: 8, rating: 3, comment: "Smooth writing." },  // Noah -> Pen
+    { _id: 9, userId: 9, productId: 9, rating: 5, comment: "Excellent balance!" },  // Olivia -> Tennis Racket
+    { _id: 10, userId: 10, productId: 10, rating: 4, comment: "Strong motor." }  // Pete -> Mixer
   ],
   db3: [
-    { _id: 1, user: "Alice", product: "Laptop", rating: 5, comment: "Fantastic device!" },
-    { _id: 2, user: "Bob", product: "Phone", rating: 4, comment: "Smooth performance." },
-    { _id: 3, user: "Carol", product: "Shirt", rating: 3, comment: "Soft and nice color." },
-    { _id: 4, user: "David", product: "Shoes", rating: 5, comment: "Excellent design." },
-    { _id: 5, user: "Eve", product: "Book", rating: 4, comment: "Inspiring." },
-    { _id: 6, user: "Quinn", product: "Camera", rating: 5, comment: "Great image quality!" },
-    { _id: 7, user: "Ruby", product: "Hat", rating: 4, comment: "Comfortable material." },
-    { _id: 8, user: "Sam", product: "Paper", rating: 3, comment: "Decent for printing." },
-    { _id: 9, user: "Tina", product: "Football", rating: 5, comment: "Durable and light." },
-    { _id: 10, user: "Uma", product: "Oven", rating: 4, comment: "Heats evenly." }
+    // replicated - same user/product IDs across all DBs
+    { _id: 1, userId: 1, productId: 1, rating: 5, comment: "Fantastic device!" },  // Alice -> Laptop
+    { _id: 2, userId: 2, productId: 2, rating: 4, comment: "Smooth performance." },  // Bob -> Phone
+    { _id: 3, userId: 3, productId: 3, rating: 3, comment: "Soft and nice color." },  // Carol -> Shirt
+    { _id: 4, userId: 4, productId: 4, rating: 5, comment: "Excellent design." },  // David -> Shoes
+    { _id: 5, userId: 5, productId: 5, rating: 4, comment: "Inspiring." },  // Eve -> Book
+    // fragmented - different user/product IDs per DB
+    { _id: 6, userId: 6, productId: 6, rating: 5, comment: "Great image quality!" },  // Quinn -> Camera
+    { _id: 7, userId: 7, productId: 7, rating: 4, comment: "Comfortable material." },  // Ruby -> Hat
+    { _id: 8, userId: 8, productId: 8, rating: 3, comment: "Decent for printing." },  // Sam -> Paper
+    { _id: 9, userId: 9, productId: 9, rating: 5, comment: "Durable and light." },  // Tina -> Football
+    { _id: 10, userId: 10, productId: 10, rating: 4, comment: "Heats evenly." }  // Uma -> Oven
   ]
 };
 

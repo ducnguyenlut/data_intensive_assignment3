@@ -1,13 +1,25 @@
 import { useState } from "react";
 import OrderEditAlert from "../alert_ui/OrderEditAlert";
 
-export default function OrderTable({ dbName, orders = [], onUpdate, onDBChange }) {
+export default function OrderTable({ dbName, orders = [], users = [], products = [], onUpdate, onDBChange }) {
   const [editingOrder, setEditingOrder] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleDBSelect = (db) => {
     setShowDropdown(false);
     onDBChange && onDBChange(db);
+  };
+
+  // Helper function to get user name by ID
+  const getUserName = (userId) => {
+    const user = users.find(u => u._id === userId);
+    return user ? user.name : `User ID: ${userId}`;
+  };
+
+  // Helper function to get product name by ID
+  const getProductName = (productId) => {
+    const product = products.find(p => p._id === productId);
+    return product ? product.name : `Product ID: ${productId}`;
   };
 
   return (
@@ -129,56 +141,60 @@ export default function OrderTable({ dbName, orders = [], onUpdate, onDBChange }
               </tr>
             </thead>
             <tbody>
-              {orders.map((o, index) => (
-                <tr
-                  key={o._id}
-                  style={{
-                    backgroundColor: index % 2 === 0 ? "#2e2c28" : "#35332f",
-                    transition: "background-color 0.2s",
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor = "#3e3c38")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.backgroundColor =
-                      index % 2 === 0 ? "#2e2c28" : "#35332f")
-                  }
-                >
-                  <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
-                    {o._id}
-                  </td>
-                  <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
-                    {o.user}
-                  </td>
-                  <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
-                    {o.product}
-                  </td>
-                  <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
-                    {o.quantity}
-                  </td>
-                  <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
-                    <button
-                      onClick={() => setEditingOrder(o)}
-                      style={{
-                        backgroundColor: "#007bff",
-                        color: "white",
-                        border: "none",
-                        padding: "6px 12px",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#0056b3")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#007bff")
-                      }
-                    >
-                      Edit
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {orders.map((o, index) => {
+                const userId = o.userId || o.user;
+                const productId = o.productId || o.product;
+                return (
+                  <tr
+                    key={o._id}
+                    style={{
+                      backgroundColor: index % 2 === 0 ? "#2e2c28" : "#35332f",
+                      transition: "background-color 0.2s",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#3e3c38")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor =
+                        index % 2 === 0 ? "#2e2c28" : "#35332f")
+                    }
+                  >
+                    <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
+                      {o._id}
+                    </td>
+                    <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
+                      {typeof userId === 'number' ? getUserName(userId) : userId}
+                    </td>
+                    <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
+                      {typeof productId === 'number' ? getProductName(productId) : productId}
+                    </td>
+                    <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
+                      {o.quantity}
+                    </td>
+                    <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
+                      <button
+                        onClick={() => setEditingOrder(o)}
+                        style={{
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          border: "none",
+                          padding: "6px 12px",
+                          borderRadius: "4px",
+                          cursor: "pointer",
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#0056b3")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#007bff")
+                        }
+                      >
+                        Edit
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -187,6 +203,8 @@ export default function OrderTable({ dbName, orders = [], onUpdate, onDBChange }
       {editingOrder && (
         <OrderEditAlert
           order={editingOrder}
+          users={users}
+          products={products}
           onSave={(updated) => {
             onUpdate(updated);
             setEditingOrder(null);

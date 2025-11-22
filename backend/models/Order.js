@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
   _id: Number,
-  user: String,
-  product: String,
+  userId: Number,  // Reference to User _id
+  productId: Number,  // Reference to Product _id
   quantity: Number
 });
 

@@ -1,13 +1,25 @@
 import { useState } from "react";
 import ReviewEditAlert from "../alert_ui/ReviewEditAlert";
 
-export default function ReviewTable({ dbName, reviews = [], onUpdate, onDBChange }) {
+export default function ReviewTable({ dbName, reviews = [], users = [], products = [], onUpdate, onDBChange }) {
   const [editingReview, setEditingReview] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleDBSelect = (db) => {
     setShowDropdown(false);
     onDBChange && onDBChange(db);
+  };
+
+  // Helper function to get user name by ID
+  const getUserName = (userId) => {
+    const user = users.find(u => u._id === userId);
+    return user ? user.name : `User ID: ${userId}`;
+  };
+
+  // Helper function to get product name by ID
+  const getProductName = (productId) => {
+    const product = products.find(p => p._id === productId);
+    return product ? product.name : `Product ID: ${productId}`;
   };
 
   return (
@@ -128,59 +140,63 @@ export default function ReviewTable({ dbName, reviews = [], onUpdate, onDBChange
               </tr>
             </thead>
             <tbody>
-              {reviews.map((r, index) => (
-                <tr
-                  key={r._id}
-                  style={{
-                    backgroundColor: index % 2 === 0 ? "#2e2c28" : "#35332f",
-                    transition: "background-color 0.2s",
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor = "#3e3c38")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.backgroundColor =
-                      index % 2 === 0 ? "#2e2c28" : "#35332f")
-                  }
-                >
-                  <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
-                    {r._id}
-                  </td>
-                  <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
-                    {r.user}
-                  </td>
-                  <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
-                    {r.product}
-                  </td>
-                  <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
-                    {r.rating}
-                  </td>
-                  <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
-                    {r.comment}
-                  </td>
-                  <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
-                    <button
-                      onClick={() => setEditingReview(r)}
-                      style={{
-                        backgroundColor: "#007bff",
-                        color: "white",
-                        border: "none",
-                        padding: "6px 12px",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#0056b3")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#007bff")
-                      }
-                    >
-                      Edit
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {reviews.map((r, index) => {
+                const userId = r.userId || r.user;
+                const productId = r.productId || r.product;
+                return (
+                  <tr
+                    key={r._id}
+                    style={{
+                      backgroundColor: index % 2 === 0 ? "#2e2c28" : "#35332f",
+                      transition: "background-color 0.2s",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#3e3c38")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor =
+                        index % 2 === 0 ? "#2e2c28" : "#35332f")
+                    }
+                  >
+                    <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
+                      {r._id}
+                    </td>
+                    <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
+                      {typeof userId === 'number' ? getUserName(userId) : userId}
+                    </td>
+                    <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
+                      {typeof productId === 'number' ? getProductName(productId) : productId}
+                    </td>
+                    <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
+                      {r.rating}
+                    </td>
+                    <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
+                      {r.comment}
+                    </td>
+                    <td style={{ padding: "8px", borderBottom: "1px solid #444" }}>
+                      <button
+                        onClick={() => setEditingReview(r)}
+                        style={{
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          border: "none",
+                          padding: "6px 12px",
+                          borderRadius: "4px",
+                          cursor: "pointer",
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#0056b3")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#007bff")
+                        }
+                      >
+                        Edit
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -189,6 +205,8 @@ export default function ReviewTable({ dbName, reviews = [], onUpdate, onDBChange
       {editingReview && (
         <ReviewEditAlert
           review={editingReview}
+          users={users}
+          products={products}
           onSave={(updated) => {
             onUpdate(updated);
             setEditingReview(null);

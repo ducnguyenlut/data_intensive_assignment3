@@ -1,14 +1,19 @@
 import { useState } from "react";
 
-export default function ReviewEditAlert({ review, onSave, onClose }) {
-  const [user, setUser] = useState(review.user);
-  const [product, setProduct] = useState(review.product);
+export default function ReviewEditAlert({ review, users = [], products = [], onSave, onClose }) {
+  // Get current IDs, fallback to old format
+  const currentUserId = review.userId || (typeof review.user === 'number' ? review.user : null);
+  const currentProductId = review.productId || (typeof review.product === 'number' ? review.product : null);
+  
+  const [userId, setUserId] = useState(currentUserId || "");
+  const [productId, setProductId] = useState(currentProductId || "");
   const [rating, setRating] = useState(review.rating);
   const [comment, setComment] = useState(review.comment);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ ...review, user, product, rating: Number(rating), comment });
+    // Save with IDs (numbers)
+    onSave({ ...review, userId: Number(userId), productId: Number(productId), rating: Number(rating), comment });
   };
 
   return (
@@ -35,32 +40,44 @@ export default function ReviewEditAlert({ review, onSave, onClose }) {
           minWidth: "320px",
         }}
       >
-        <h2>Edit Review</h2>
+        <h2 style={{ color: "white" }}>Edit Review</h2>
 
         <div style={{ marginBottom: "10px" }}>
-          <label>User:</label>
-          <input
-            type="text"
-            value={user}
-            onChange={(e) => setUser(e.target.value)}
-            style={{ width: "100%", padding: "5px" }}
+          <label style={{ color: "white", display: "block", marginBottom: "5px" }}>User:</label>
+          <select
+            value={userId}
+            onChange={(e) => setUserId(e.target.value)}
+            style={{ width: "100%", padding: "5px", backgroundColor: "#2e2c28", color: "white", border: "1px solid #555" }}
             required
-          />
+          >
+            <option value="">Select a user</option>
+            {users.map((user) => (
+              <option key={user._id} value={user._id}>
+                {user.name} (ID: {user._id})
+              </option>
+            ))}
+          </select>
         </div>
 
         <div style={{ marginBottom: "10px" }}>
-          <label>Product:</label>
-          <input
-            type="text"
-            value={product}
-            onChange={(e) => setProduct(e.target.value)}
-            style={{ width: "100%", padding: "5px" }}
+          <label style={{ color: "white", display: "block", marginBottom: "5px" }}>Product:</label>
+          <select
+            value={productId}
+            onChange={(e) => setProductId(e.target.value)}
+            style={{ width: "100%", padding: "5px", backgroundColor: "#2e2c28", color: "white", border: "1px solid #555" }}
             required
-          />
+          >
+            <option value="">Select a product</option>
+            {products.map((product) => (
+              <option key={product._id} value={product._id}>
+                {product.name} (ID: {product._id})
+              </option>
+            ))}
+          </select>
         </div>
 
         <div style={{ marginBottom: "10px" }}>
-          <label>Rating:</label>
+          <label style={{ color: "white", display: "block", marginBottom: "5px" }}>Rating:</label>
           <input
             type="number"
             value={rating}
@@ -73,7 +90,7 @@ export default function ReviewEditAlert({ review, onSave, onClose }) {
         </div>
 
         <div style={{ marginBottom: "10px" }}>
-          <label>Comment:</label>
+          <label style={{ color: "white", display: "block", marginBottom: "5px" }}>Comment:</label>
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
